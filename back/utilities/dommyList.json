@@ -1,0 +1,84 @@
+[
+  {
+    "products": [
+      {
+        "productName": "product1",
+        "price": 100,
+        "quantity": 20,
+        "description": "It's an awesome product for your dates",
+        "images": [
+          "https://m.media-amazon.com/images/I/518G3jarbOL._AC_SX695_.jpg",
+          "https://m.media-amazon.com/images/I/71TPWo0PlmL._AC_SY500_.jpg"
+        ],
+        "typeProduct": ["women"],
+        "category": ["winter", "summer"],
+        "size": [35, 36, 37, 38, 39],
+        "color": ["black", "white", "red", "gray"]
+      },
+      {
+        "productName": "product2",
+        "price": 120,
+        "quantity": 12,
+        "description": "It's a cool product",
+        "images": [
+          "https://m.media-amazon.com/images/I/816PgeLLfvL._AC_SY395_.jpg",
+          "https://m.media-amazon.com/images/I/81AJylKylKL._AC_SY395_.jpg"
+        ],
+        "typeProduct": ["women", "male"],
+        "category": ["summer"],
+        "size": [38, 40, 42],
+        "color": ["black", "gray"]
+      },
+      {
+        "productName": "product3",
+        "price": 210,
+        "quantity": 8,
+        "description": "Fantastic shoes for every time",
+        "images": [
+          "https://m.media-amazon.com/images/I/71TX42gbNzL._AC_SX395_.jpg",
+          "https://m.media-amazon.com/images/I/81gf98EmaGL._AC_SX395_.jpg"
+        ],
+        "typeProduct": ["male", "kid"],
+        "category": ["winter", "summer", "spring", "autumn"],
+        "size": [35, 36, 37, 38, 39, 40, 41, 42],
+        "color": ["black", "gray", "white"],
+        "promotion": true
+      }
+    ],
+    "orders": [
+      {
+        "products": [
+          {
+            "id": "65514a93aa9dc63838a444da",
+            "quantity": 5,
+            "price": 100,
+            "total": 500
+          },
+          {
+            "id": "65514b31aa9dc63838a444e5",
+            "quantity": 2,
+            "price": 120,
+            "total": 240
+          }
+        ],
+        "quantityArticules": 7,
+        "totalPurchase": 740,
+        "customerId": "655292de59c1886c6d1c9fe5"
+      },
+      {
+        "_id": 1234567890,
+        "products": [
+          {
+            "id": "65514b31aa9dc63838a444e5",
+            "quantity": 11,
+            "price": 120,
+            "total": 1320
+          }
+        ],
+        "quantityArticules": 3,
+        "totalPurchase": 420,
+        "customerId": "655292de59c1886c6d1c9fe5"
+      }
+    ]
+  }
+]
