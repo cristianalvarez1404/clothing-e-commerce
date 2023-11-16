@@ -55,8 +55,17 @@ const ProductSchema = new mongoose.Schema({
   review: {
     type: [
       {
-        idUser: String,
-        score: Number,
+        idUser: {
+          type: String,
+        },
+        score: {
+          type: Number,
+          min: [0, `Your score can not be less than 0`],
+          max: [5, `Your score can not be more than 5`],
+        },
+        comment: {
+          type: String,
+        },
       },
     ],
   },

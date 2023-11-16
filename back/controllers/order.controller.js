@@ -193,10 +193,50 @@ const updateOrderUser = async (req, res, next) => {
   }
 };
 
+const deleteOrder = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { id: idSession, role } = req.userSession;
+
+    const order = await OrderModel.findOne({ _id: id });
+
+    if (!order) throw new Error(`Order does not exist!`);
+
+    if (order.customerId !== idSession && role === "client")
+      throw new Error(`You are not authorized for delete this order`);
+
+    if (order.status !== "pending")
+      throw new Error(
+        `Order ${id} can not deleted, because its status is ${order.status}`
+      );
+
+    for (const productOrder of order.products) {
+      let updateQuantityProduct = await ProductModel.findById(productOrder.id);
+      updateQuantityProduct.quantity =
+        updateQuantityProduct.quantity + productOrder.quantity;
+
+      await updateQuantityProduct.save();
+    }
+
+    await order.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: `Order ${id} was deleted!`,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 export {
   createOrder,
   updateStatusOrder,
   getOrders,
   getOrdersForAdmin,
   updateOrderUser,
+  deleteOrder,
 };

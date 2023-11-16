@@ -1,3 +1,4 @@
+import { OrderModel } from "../models/order.model.js";
 import { ProductModel } from "../models/product.model.js";
 
 ProductModel;
@@ -175,9 +176,63 @@ const getProduct = async (req, res, next) => {
   }
 };
 
-//pendiente...
 const addReviewProduct = async (req, res, next) => {
   try {
+    const { id: idProduct } = req.params;
+
+    const { id, role } = req.userSession;
+
+    const { idUser, score, comment } = req.body;
+
+    const product = await ProductModel.findOne({ _id: idProduct });
+
+    if (!product)
+      throw new Error(`Product with id ${idProduct} does not exist`);
+
+    for (const userProduct of product.review) {
+      if (userProduct.idUser === idUser) {
+        throw new Error(`User already has created a review.`);
+      }
+    }
+
+    if (idUser !== id)
+      throw new Error(`You have to login with your own account`);
+
+    const order = (await OrderModel.find()).filter(
+      (orderUser) => orderUser.customerId === idUser
+    );
+
+    if (!order) throw new Error(`You have not bought products yet`);
+
+    let userHasOrder = false;
+    for (const unitOrder of order) {
+      // console.log(unitOrder);
+      for (const exitsProduct of unitOrder.products) {
+        if (exitsProduct.id === idProduct) {
+          userHasOrder = true;
+          break;
+        }
+      }
+      if (userHasOrder) {
+        break;
+      }
+    }
+
+    if (!userHasOrder) throw new Error(`You have not bought this product yet`);
+
+    const reviewData = {
+      idUser,
+      score,
+      comment,
+    };
+
+    product.review.push(reviewData);
+
+    await product.save();
+    res.status(200).json({
+      success: true,
+      product,
+    });
   } catch (err) {
     res.status(400).json({
       success: false,
@@ -186,4 +241,11 @@ const addReviewProduct = async (req, res, next) => {
   }
 };
 
-export { createProduct, updateProduct, deleteProduct, getProducts, getProduct };
+export {
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getProducts,
+  getProduct,
+  addReviewProduct,
+};
