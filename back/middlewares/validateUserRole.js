@@ -17,6 +17,8 @@ const validateUserRole = async (req, res, next) => {
           throw new Error(`User unauthorized!`);
         }
 
+        req.userSession = { id: data._id, role: data.role };
+
         next();
       } catch (err) {
         res.status(400).json({

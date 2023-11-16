@@ -13,6 +13,8 @@ const validateUserLogin = async (req, res, next) => {
 
         if (!user) throw new Error(`User does not exist!`);
 
+        req.userSession = { id: data._id, role: data.role };
+
         next();
       } catch (err) {
         res.status(400).json({

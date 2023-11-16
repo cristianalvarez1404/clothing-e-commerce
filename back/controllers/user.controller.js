@@ -86,9 +86,14 @@ const getUsers = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { id: idSession, role } = req.userSession;
+
     const user = await User.findById(id);
 
     if (!user) throw new Error(`User does not exist!`);
+
+    if (user._id.toString() !== idSession && role === "client")
+      throw new Error(`You are not authorized`);
 
     res.status(200).json({
       success: true,
@@ -104,6 +109,8 @@ const getUser = async (req, res, next) => {
 
 const logoutSession = async (req, res, next) => {
   try {
+    req.userSession = null;
+
     res
       .cookie("user-id", ``, {
         expire: Date.now(),

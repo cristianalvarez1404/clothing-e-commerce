@@ -60,6 +60,9 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "client"],
       default: "client",
     },
+    orders: {
+      type: [String],
+    },
   },
   {
     timestamps: true,

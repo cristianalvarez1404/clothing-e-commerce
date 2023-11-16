@@ -7,6 +7,17 @@ const createOrder = async (req, res, next) => {
     const { products, quantityArticules, state, totalPurchase, customerId } =
       req.body;
 
+    const idUser = req.userSession.id;
+
+    const user = await userModel.findById(idUser);
+
+    if (!user) throw new Error(`User does not exist!`);
+
+    if (idUser !== customerId)
+      throw new Error(
+        `Your customerId ${customerId} is invalid,please validate with your own id`
+      );
+
     const newOrder = {
       products,
       quantityArticules,
@@ -30,6 +41,8 @@ const createOrder = async (req, res, next) => {
 
       await updateQuantityProduct.save();
     }
+
+    await user.updateOne({ orders: [...user.orders, order._id] });
 
     res.status(200).json({
       success: true,
@@ -76,12 +89,15 @@ const updateStatusOrder = async (req, res, next) => {
 
 const getOrders = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    console.log("hola otra vez");
+    let { id, role } = req.userSession;
 
-    const orders = (await OrderModel.find()).filter(
-      (order) => order.customerId === id
-    );
+    let orders = [];
+
+    role === "admin"
+      ? (orders = await OrderModel.find())
+      : (orders = (await OrderModel.find()).filter(
+          (order) => order.customerId === id && role === "client"
+        ));
 
     res.status(200).json({
       success: true,
@@ -97,12 +113,14 @@ const getOrders = async (req, res, next) => {
 
 const getOrdersForAdmin = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    console.log(id);
+    const id = req.query.id;
+
     let orders = [];
 
     id
-      ? (orders = await OrderModel.findById(id))
+      ? (orders = (await OrderModel.find()).filter(
+          (order) => order.customerId === id
+        ))
       : (orders = await OrderModel.find());
 
     res.status(200).json({
@@ -117,4 +135,68 @@ const getOrdersForAdmin = async (req, res, next) => {
   }
 };
 
-export { createOrder, updateStatusOrder, getOrders, getOrdersForAdmin };
+const updateOrderUser = async (req, res, next) => {
+  try {
+    const { id, role } = req.userSession;
+    const { idOrder } = req.params;
+    const { products, quantityArticules, totalPurchase, customerId } = req.body;
+
+    const order = await OrderModel.findOne({ _id: idOrder });
+
+    if (!order) throw new Error(`Order does not exist`);
+
+    if (order.customerId !== id && role === "client")
+      throw new Error(`You aren't authorized for this order`);
+
+    for (const productOrder of order.products) {
+      let updateQuantityProduct = await ProductModel.findById(productOrder.id);
+      console.log(productOrder.quantity);
+      updateQuantityProduct.quantity =
+        updateQuantityProduct.quantity + productOrder.quantity;
+
+      await updateQuantityProduct.save();
+    }
+
+    for (const newProductOrder of products) {
+      let newUpdateQuantityProduct = await ProductModel.findById(
+        newProductOrder.id
+      );
+      console.log(newProductOrder.quantity);
+      if (!newUpdateQuantityProduct)
+        throw new Error(`Product with id ${newProductOrder.id} does not exist`);
+
+      newUpdateQuantityProduct.quantity =
+        newUpdateQuantityProduct.quantity - newProductOrder.quantity;
+
+      if (newUpdateQuantityProduct.quantity < 0)
+        throw new Error(`Product with id ${newProductOrder.id} have not stock`);
+
+      await newUpdateQuantityProduct.save();
+    }
+
+    order.products = products;
+    order.quantityArticules = quantityArticules;
+    order.totalPurchase = totalPurchase;
+    order.customerId = customerId;
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+export {
+  createOrder,
+  updateStatusOrder,
+  getOrders,
+  getOrdersForAdmin,
+  updateOrderUser,
+};
