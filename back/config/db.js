@@ -9,7 +9,8 @@ const dbConnection = () => {
       console.log(`DB connected successfully!`);
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err.message);
+      setTimeout(dbConnection, 5000);
     });
 };
 

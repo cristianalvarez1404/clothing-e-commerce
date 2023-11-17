@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import { ErrorHandler } from "../utilities/ErrorHandler.js";
 
 const createUser = async (req, res, next) => {
   try {
@@ -17,10 +18,7 @@ const createUser = async (req, res, next) => {
 
     res.status(200).json({ success: true, user });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -60,10 +58,7 @@ const loginUser = async (req, res, next) => {
       .status(200)
       .json({ success: true, message: `Succesfull login 🚀` });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -76,10 +71,7 @@ const getUsers = async (req, res, next) => {
       users,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -100,10 +92,7 @@ const getUser = async (req, res, next) => {
       user,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -119,10 +108,7 @@ const logoutSession = async (req, res, next) => {
       .status(200)
       .json({ success: true, message: `Logout succesfull 🚀` });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -147,10 +133,7 @@ const updateUser = async (req, res, next) => {
       user,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -167,10 +150,7 @@ const deleteUser = async (req, res, next) => {
       message: `User deleted succesfully 👌`,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 

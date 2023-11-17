@@ -1,5 +1,6 @@
 import { OrderModel } from "../models/order.model.js";
 import { ProductModel } from "../models/product.model.js";
+import { ErrorHandler } from "../utilities/ErrorHandler.js";
 
 ProductModel;
 
@@ -40,10 +41,7 @@ const createProduct = async (req, res, next) => {
       product,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -85,10 +83,7 @@ const updateProduct = async (req, res, next) => {
       product,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -103,10 +98,7 @@ const deleteProduct = async (req, res, next) => {
       message: `Product was deleted successfully 🧨👌`,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -150,10 +142,7 @@ const getProducts = async (req, res, next) => {
       products,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -169,10 +158,7 @@ const getProduct = async (req, res, next) => {
       product,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -228,10 +214,87 @@ const addReviewProduct = async (req, res, next) => {
 
     product.review.push(reviewData);
 
+    let totalScore = 0;
+
+    for (const newAverage of product.review) {
+      totalScore += newAverage.score;
+    }
+
+    product.averageScore = Math.round(totalScore / product.review.length);
+
     await product.save();
     res.status(200).json({
       success: true,
       product,
+    });
+  } catch (err) {
+    next(new ErrorHandler(err.message, 400));
+  }
+};
+
+const updateReview = async (req, res, next) => {
+  try {
+    const { id: idSession, role } = req.userSession;
+    const { id } = req.params;
+    const { idUser: idUserReview, score, comment } = req.body;
+
+    if (idUserReview !== idSession)
+      throw new Error(`You are not authorized for update this review`);
+
+    const product = await ProductModel.findOne({ _id: id });
+
+    if (!product) throw new Error(`Product does not exist`);
+
+    let userHasReview = false;
+
+    for (const review of product.review) {
+      if (review.idUser === idSession) {
+        userHasReview = true;
+        review.score = score;
+        review.comment = comment;
+      }
+    }
+
+    if (!userHasReview) throw new Error(`You have not reviews in this product`);
+
+    let totalScore = 0;
+
+    for (const newAverage of product.review) {
+      totalScore += newAverage.score;
+    }
+
+    product.averageScore = Math.round(totalScore / product.review.length);
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (err) {
+    next(new ErrorHandler(err.message, 400));
+  }
+};
+
+/*
+const getReviews = async (req, res, next) => {
+  try {
+    const { id: idSession, role } = req.userSession;
+    const { id } = req.params;
+
+    const product = await ProductModel.findOne({ _id: id });
+
+    let reviewUser = [];
+
+    for (const review of product.review) {
+      if (review.idUser === idSession) {
+        reviewUser.push(review);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: reviewUser,
     });
   } catch (err) {
     res.status(400).json({
@@ -240,7 +303,7 @@ const addReviewProduct = async (req, res, next) => {
     });
   }
 };
-
+*/
 export {
   createProduct,
   updateProduct,
@@ -248,4 +311,5 @@ export {
   getProducts,
   getProduct,
   addReviewProduct,
+  updateReview,
 };

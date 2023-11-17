@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import { ErrorHandler } from "../utilities/ErrorHandler.js";
 
 const validateUserRole = async (req, res, next) => {
   const userToken = req.cookies["user-id"];
@@ -21,17 +22,12 @@ const validateUserRole = async (req, res, next) => {
 
         next();
       } catch (err) {
-        res.status(400).json({
-          success: false,
-          message: err.message,
-        });
+        next(new ErrorHandler(err.message, 400));
       }
     });
   } else {
-    return res.status(400).json({
-      success: false,
-      message: `You have to login`,
-    });
+    const err = new Error(`You have to login`);
+    next(new ErrorHandler(err.message, 400));
   }
 };
 

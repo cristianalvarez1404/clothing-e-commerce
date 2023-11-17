@@ -1,6 +1,7 @@
 import { OrderModel } from "../models/order.model.js";
 import { ProductModel } from "../models/product.model.js";
 import userModel from "../models/user.model.js";
+import { ErrorHandler } from "../utilities/ErrorHandler.js";
 
 const createOrder = async (req, res, next) => {
   try {
@@ -49,10 +50,7 @@ const createOrder = async (req, res, next) => {
       order,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -80,10 +78,7 @@ const updateStatusOrder = async (req, res, next) => {
       message: `Your order ${id} is modified to ${status}`,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -104,10 +99,7 @@ const getOrders = async (req, res, next) => {
       orders,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -128,10 +120,7 @@ const getOrdersForAdmin = async (req, res, next) => {
       orders,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -186,10 +175,7 @@ const updateOrderUser = async (req, res, next) => {
       order,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
@@ -225,10 +211,7 @@ const deleteOrder = async (req, res, next) => {
       message: `Order ${id} was deleted!`,
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    next(new ErrorHandler(err.message, 400));
   }
 };
 
