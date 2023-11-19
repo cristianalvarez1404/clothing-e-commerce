@@ -1,22 +1,23 @@
 import express from "express";
-import {
-  createOrder,
-  deleteOrder,
-  getOrders,
-  getOrdersForAdmin,
-  updateOrderUser,
-  updateStatusOrder,
-} from "../controllers/order.controller.js";
 import { validateUserLogin } from "../middlewares/validateUserLogin.js";
 import { validateUserRole } from "../middlewares/validateUserRole.js";
+import { OrderController } from "../controllers/order.controller.js";
 
 const orderRouter = express.Router();
 
-orderRouter.post("/", validateUserLogin, createOrder);
-orderRouter.get("/", validateUserLogin, getOrders);
-orderRouter.get("/admin", validateUserRole, getOrdersForAdmin);
-orderRouter.put("/:idOrder", validateUserLogin, updateOrderUser);
-orderRouter.put("/modifyStatus/:id", validateUserLogin, updateStatusOrder);
-orderRouter.delete("/:id", validateUserLogin, deleteOrder);
+orderRouter.post("/", validateUserLogin, OrderController.createOrder);
+orderRouter.get("/", validateUserLogin, OrderController.getOrders);
+orderRouter.get("/admin", validateUserRole, OrderController.getOrdersForAdmin);
+orderRouter.put(
+  "/:idOrder",
+  validateUserLogin,
+  OrderController.updateOrderUser
+);
+orderRouter.put(
+  "/modifyStatus/:id",
+  validateUserLogin,
+  OrderController.updateStatusOrder
+);
+orderRouter.delete("/:id", validateUserLogin, OrderController.deleteOrder);
 
 export { orderRouter };

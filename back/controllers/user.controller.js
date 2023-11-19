@@ -1,165 +1,152 @@
-import User from "../models/user.model.js";
 import { ErrorHandler } from "../utilities/ErrorHandler.js";
+import { UserClass } from "../models/MongoDB/userMongoModel.js";
 
-const createUser = async (req, res, next) => {
-  try {
-    const { firstName, lastName, email, phone, password, role } = req.body;
+export class UserController {
+  static async createUser(req, res, next) {
+    try {
+      const { firstName, lastName, email, phone, password, role } = req.body;
 
-    const userData = {
-      firstName,
-      lastName,
-      email,
-      phone,
-      password,
-      role,
-    };
+      const user = await UserClass.createUser(
+        firstName,
+        lastName,
+        email,
+        phone,
+        password,
+        role
+      );
 
-    const user = await User.create(userData);
-
-    res.status(200).json({ success: true, user });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
-
-const loginUser = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email }).select("+password");
-
-    if (!user) throw new Error(`Email does not exist!!!`);
-
-    const tokenSession = await user.genereteToken({
-      _id: user._id,
-      email: user.email,
-      password: user.password,
-      role: user.role,
-      password: user.password,
-    });
-
-    const validatePassword = await user.validatePassword(
-      tokenSession,
-      password
-    );
-
-    if (!validatePassword) {
-      throw new Error(`Credentias are wrong,please check it`);
+      res.status(200).json({ success: true, user });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
     }
+  } //
 
-    const cookieDaysExpire = 1000 * 60 * 60 * 24;
-    const cookieDateExpire = new Date() + cookieDaysExpire;
+  static async loginUser(req, res, next) {
+    try {
+      const { email, password } = req.body;
 
-    res
-      .cookie("user-id", `${tokenSession}`, {
-        expire: cookieDateExpire,
-        httpOnly: true,
-      })
-      .status(200)
-      .json({ success: true, message: `Succesfull login 🚀` });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+      const user = await UserClass.findUserByField("email", email);
 
-const getUsers = async (req, res, next) => {
-  try {
-    const users = await User.find();
+      if (!user) throw new Error(`Email does not exist!!!`);
 
-    res.status(200).json({
-      success: true,
-      users,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+      const tokenSession = await UserClass.generateTokenUser();
 
-const getUser = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { id: idSession, role } = req.userSession;
+      const validatePassword = await UserClass.validatePasswordUser(
+        tokenSession,
+        password
+      );
 
-    const user = await User.findById(id);
+      if (!validatePassword) {
+        throw new Error(`Credentias are wrong,please check it`);
+      }
 
-    if (!user) throw new Error(`User does not exist!`);
+      const cookieDaysExpire = 1000 * 60 * 60 * 24;
+      const cookieDateExpire = new Date() + cookieDaysExpire;
 
-    if (user._id.toString() !== idSession && role === "client")
-      throw new Error(`You are not authorized`);
+      res
+        .cookie("user-id", `${tokenSession}`, {
+          expire: cookieDateExpire,
+          httpOnly: true,
+        })
+        .status(200)
+        .json({ success: true, message: `Succesfull login 🚀` });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
 
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+  static async getUsers(req, res, next) {
+    try {
+      const users = await UserClass.getAllUsers();
 
-const logoutSession = async (req, res, next) => {
-  try {
-    req.userSession = null;
+      res.status(200).json({
+        success: true,
+        users,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
 
-    res
-      .cookie("user-id", ``, {
-        expire: Date.now(),
-        httpOnly: true,
-      })
-      .status(200)
-      .json({ success: true, message: `Logout succesfull 🚀` });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+  static async getUser(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { id: idSession, role } = req.userSession;
 
-const updateUser = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+      const user = await UserClass.findUserById(id);
 
-    const { firstName, lastName, email, phone, password, role } = req.body;
+      if (!user) throw new Error(`User does not exist!`);
 
-    const user = await User.findOne({ _id: id });
+      if (user._id.toString() !== idSession && role === "client")
+        throw new Error(`You are not authorized`);
 
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.email = email || user.email;
-    user.phone = phone || user.phone;
-    user.password = password || user.password;
-    user.role = role || user.role;
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
 
-    await user.save();
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+  static async logoutSession(req, res, next) {
+    try {
+      req.userSession = null;
 
-const deleteUser = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+      UserClass.resetUser();
 
-    const user = await User.findOne({ _id: id });
+      res
+        .cookie("user-id", ``, {
+          expire: Date.now(),
+          httpOnly: true,
+        })
+        .status(200)
+        .json({ success: true, message: `Logout succesfull 🚀` });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
 
-    await user.deleteOne();
+  static async updateUser(req, res, next) {
+    try {
+      const { id } = req.params;
 
-    res.status(200).json({
-      success: true,
-      message: `User deleted succesfully 👌`,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+      const { firstName, lastName, email, phone, password, role } = req.body;
 
-export {
-  createUser,
-  loginUser,
-  getUsers,
-  getUser,
-  updateUser,
-  logoutSession,
-  deleteUser,
-};
+      let user = await UserClass.findUserById(id);
+
+      user = await UserClass.updateUser(
+        firstName,
+        lastName,
+        email,
+        phone,
+        password,
+        role
+      );
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
+
+  static async deleteUser(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      await UserClass.findUserById(id);
+
+      await UserClass.deleteUserById();
+
+      res.status(200).json({
+        success: true,
+        message: `User deleted succesfully 👌`,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
+}

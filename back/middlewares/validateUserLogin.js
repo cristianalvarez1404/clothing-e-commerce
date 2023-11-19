@@ -1,6 +1,6 @@
-import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { ErrorHandler } from "../utilities/ErrorHandler.js";
+import { UserClass } from "../models/MongoDB/userMongoModel.js";
 
 const validateUserLogin = async (req, res, next) => {
   const userToken = req.cookies["user-id"];
@@ -10,7 +10,7 @@ const validateUserLogin = async (req, res, next) => {
       try {
         if (err) throw new Error(`Invalid token`);
 
-        const user = await User.findOne({ _id: data._id });
+        const user = await UserClass.findUserById(data._id);
 
         if (!user) throw new Error(`User does not exist!`);
 

@@ -1,225 +1,234 @@
-import { OrderModel } from "../models/order.model.js";
-import { ProductModel } from "../models/product.model.js";
-import userModel from "../models/user.model.js";
 import { ErrorHandler } from "../utilities/ErrorHandler.js";
+import { OrderClass } from "../models/MongoDB/orderMongoModel.js";
+import { ProductClass } from "../models/MongoDB/productMongoModel.js";
+import { UserClass } from "../models/MongoDB/userMongoModel.js";
 
-const createOrder = async (req, res, next) => {
-  try {
-    const { products, quantityArticules, state, totalPurchase, customerId } =
-      req.body;
+export class OrderController {
+  static async createOrder(req, res, next) {
+    try {
+      const { products, quantityArticules, state, totalPurchase, customerId } =
+        req.body;
 
-    const idUser = req.userSession.id;
+      const idUser = req.userSession.id;
 
-    const user = await userModel.findById(idUser);
+      const user = await UserClass.findUserById(idUser); //
 
-    if (!user) throw new Error(`User does not exist!`);
+      if (!user) throw new Error(`User does not exist!`);
 
-    if (idUser !== customerId)
-      throw new Error(
-        `Your customerId ${customerId} is invalid,please validate with your own id`
-      );
+      if (idUser !== customerId)
+        throw new Error(
+          `Your customerId ${customerId} is invalid,please validate with your own id`
+        );
 
-    const newOrder = {
-      products,
-      quantityArticules,
-      state,
-      totalPurchase,
-      customerId,
-    };
+      const order = await OrderClass.createOrder(
+        products,
+        quantityArticules,
+        state,
+        totalPurchase,
+        customerId
+      ); //
 
-    const order = await OrderModel.create(newOrder);
+      for (const productOrder of products) {
+        let updateQuantityProduct = await ProductClass.findProductById(
+          productOrder.id
+        ); //
+        if (!updateQuantityProduct)
+          throw new Error(`Product with id ${productOrder.id} does not exist`);
 
-    for (const productOrder of products) {
-      let updateQuantityProduct = await ProductModel.findById(productOrder.id);
-      if (!updateQuantityProduct)
-        throw new Error(`Product with id ${productOrder.id} does not exist`);
+        updateQuantityProduct.quantity =
+          updateQuantityProduct.quantity - productOrder.quantity;
 
-      updateQuantityProduct.quantity =
-        updateQuantityProduct.quantity - productOrder.quantity;
+        if (updateQuantityProduct.quantity < 0)
+          throw new Error(`Product with id ${productOrder.id} have not stock`);
 
-      if (updateQuantityProduct.quantity < 0)
-        throw new Error(`Product with id ${productOrder.id} have not stock`);
+        await ProductClass.saveProduct();
+      }
 
-      await updateQuantityProduct.save();
+      await UserClass.updateUserOrders(user.orders, order._id); //
+
+      res.status(200).json({
+        success: true,
+        order,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
     }
+  } //
 
-    await user.updateOne({ orders: [...user.orders, order._id] });
+  static async updateStatusOrder(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { status } = req.query;
 
-    res.status(200).json({
-      success: true,
-      order,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+      const order = await OrderClass.findOrderById(id); //
 
-const updateStatusOrder = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.query;
+      if (!order) throw new Error(`Order ${id} does not exist`);
 
-    const order = await OrderModel.findOne({ _id: id });
+      const customer = await UserClass.findUserById(order.customerId); //
 
-    if (!order) throw new Error(`Order ${id} does not exist`);
+      if (!customer)
+        throw new Error(
+          `Customer does not authorized for updated this purchase`
+        );
 
-    const customer = await userModel.findById(order.customerId);
+      if (order.status === "delivered" || order.status === "rejected")
+        throw new Error(`Product has been updated with status "${status}"`);
 
-    if (!customer)
-      throw new Error(`Customer does not authorized for updated this purchase`);
+      await OrderClass.updateOrderStatus(status); //
 
-    if (order.status === "delivered" || order.status === "rejected")
-      throw new Error(`Product has been updated with status "${status}"`);
-
-    await order.save();
-
-    res.status(200).json({
-      success: true,
-      message: `Your order ${id} is modified to ${status}`,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
-
-const getOrders = async (req, res, next) => {
-  try {
-    let { id, role } = req.userSession;
-
-    let orders = [];
-
-    role === "admin"
-      ? (orders = await OrderModel.find())
-      : (orders = (await OrderModel.find()).filter(
-          (order) => order.customerId === id && role === "client"
-        ));
-
-    res.status(200).json({
-      success: true,
-      orders,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
-
-const getOrdersForAdmin = async (req, res, next) => {
-  try {
-    const id = req.query.id;
-
-    let orders = [];
-
-    id
-      ? (orders = (await OrderModel.find()).filter(
-          (order) => order.customerId === id
-        ))
-      : (orders = await OrderModel.find());
-
-    res.status(200).json({
-      success: true,
-      orders,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
-
-const updateOrderUser = async (req, res, next) => {
-  try {
-    const { id, role } = req.userSession;
-    const { idOrder } = req.params;
-    const { products, quantityArticules, totalPurchase, customerId } = req.body;
-
-    const order = await OrderModel.findOne({ _id: idOrder });
-
-    if (!order) throw new Error(`Order does not exist`);
-
-    if (order.customerId !== id && role === "client")
-      throw new Error(`You aren't authorized for this order`);
-
-    for (const productOrder of order.products) {
-      let updateQuantityProduct = await ProductModel.findById(productOrder.id);
-      console.log(productOrder.quantity);
-      updateQuantityProduct.quantity =
-        updateQuantityProduct.quantity + productOrder.quantity;
-
-      await updateQuantityProduct.save();
+      res.status(200).json({
+        success: true,
+        message: `Your order ${id} is modified to ${status}`,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
     }
+  } //
 
-    for (const newProductOrder of products) {
-      let newUpdateQuantityProduct = await ProductModel.findById(
-        newProductOrder.id
-      );
-      console.log(newProductOrder.quantity);
-      if (!newUpdateQuantityProduct)
-        throw new Error(`Product with id ${newProductOrder.id} does not exist`);
+  static async getOrders(req, res, next) {
+    try {
+      let { id, role } = req.userSession;
 
-      newUpdateQuantityProduct.quantity =
-        newUpdateQuantityProduct.quantity - newProductOrder.quantity;
+      let orders = [];
 
-      if (newUpdateQuantityProduct.quantity < 0)
-        throw new Error(`Product with id ${newProductOrder.id} have not stock`);
+      role === "admin"
+        ? (orders = await OrderClass.getAllOrders())
+        : (orders = (await OrderClass.getAllOrders()).filter(
+            (order) => order.customerId === id && role === "client"
+          )); //
 
-      await newUpdateQuantityProduct.save();
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
     }
+  } //
 
-    order.products = products;
-    order.quantityArticules = quantityArticules;
-    order.totalPurchase = totalPurchase;
-    order.customerId = customerId;
+  static async getOrdersForAdmin(req, res, next) {
+    try {
+      const id = req.query.id;
 
-    await order.save();
+      let orders = [];
 
-    res.status(200).json({
-      success: true,
-      order,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+      id
+        ? (orders = (await OrderClass.getAllOrders()).filter(
+            (order) => order.customerId === id
+          ))
+        : (orders = await OrderClass.getAllOrders());
 
-const deleteOrder = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { id: idSession, role } = req.userSession;
-
-    const order = await OrderModel.findOne({ _id: id });
-
-    if (!order) throw new Error(`Order does not exist!`);
-
-    if (order.customerId !== idSession && role === "client")
-      throw new Error(`You are not authorized for delete this order`);
-
-    if (order.status !== "pending")
-      throw new Error(
-        `Order ${id} can not deleted, because its status is ${order.status}`
-      );
-
-    for (const productOrder of order.products) {
-      let updateQuantityProduct = await ProductModel.findById(productOrder.id);
-      updateQuantityProduct.quantity =
-        updateQuantityProduct.quantity + productOrder.quantity;
-
-      await updateQuantityProduct.save();
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
     }
+  } //
 
-    await order.deleteOne();
+  static async updateOrderUser(req, res, next) {
+    try {
+      const { id, role } = req.userSession;
+      const { idOrder } = req.params;
+      const { products, quantityArticules, totalPurchase, customerId } =
+        req.body;
 
-    res.status(200).json({
-      success: true,
-      message: `Order ${id} was deleted!`,
-    });
-  } catch (err) {
-    next(new ErrorHandler(err.message, 400));
-  }
-};
+      const order = await OrderClass.findOrderById(idOrder); //
 
-export {
-  createOrder,
-  updateStatusOrder,
-  getOrders,
-  getOrdersForAdmin,
-  updateOrderUser,
-  deleteOrder,
-};
+      if (!order) throw new Error(`Order does not exist`);
+
+      if (order.customerId !== id && role === "client")
+        throw new Error(`You aren't authorized for this order`);
+
+      if (order.status !== "pending")
+        throw new Error(
+          `Your order ${idOrder} already has been ${order.status}`
+        );
+
+      for (const productOrder of order.products) {
+        let updateQuantityProduct = await ProductClass.findProductById(
+          productOrder.id
+        ); //
+
+        updateQuantityProduct.quantity =
+          updateQuantityProduct.quantity + productOrder.quantity;
+
+        await ProductClass.saveProduct(); //
+      }
+
+      for (const newProductOrder of products) {
+        let newUpdateQuantityProduct = await ProductClass.findProductById(
+          newProductOrder.id
+        ); //
+
+        if (!newUpdateQuantityProduct)
+          throw new Error(
+            `Product with id ${newProductOrder.id} does not exist`
+          );
+
+        newUpdateQuantityProduct.quantity =
+          newUpdateQuantityProduct.quantity - newProductOrder.quantity;
+
+        if (newUpdateQuantityProduct.quantity < 0)
+          throw new Error(
+            `Product with id ${newProductOrder.id} have not stock`
+          );
+
+        await ProductClass.saveProduct(); //
+      }
+
+      order.products = products;
+      order.quantityArticules = quantityArticules;
+      order.totalPurchase = totalPurchase;
+      order.customerId = customerId;
+
+      await OrderClass.saveOrder(); //
+
+      res.status(200).json({
+        success: true,
+        order,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
+
+  static async deleteOrder(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { id: idSession, role } = req.userSession;
+
+      const order = await OrderClass.findOrderById({ _id: id }); //
+
+      if (!order) throw new Error(`Order does not exist!`);
+
+      if (order.customerId !== idSession && role === "client")
+        throw new Error(`You are not authorized for delete this order`);
+
+      if (order.status !== "pending")
+        throw new Error(
+          `Order ${id} can not deleted, because its status is ${order.status}`
+        );
+
+      for (const productOrder of order.products) {
+        let updateQuantityProduct = await ProductClass.findProductById(
+          productOrder.id
+        ); //
+        updateQuantityProduct.quantity =
+          updateQuantityProduct.quantity + productOrder.quantity;
+
+        await ProductClass.saveProduct(); //
+      }
+
+      await OrderClass.deleteOrder(); //
+
+      res.status(200).json({
+        success: true,
+        message: `Order ${id} was deleted!`,
+      });
+    } catch (err) {
+      next(new ErrorHandler(err.message, 400));
+    }
+  } //
+}

@@ -1,25 +1,17 @@
 import express from "express";
-import {
-  createUser,
-  deleteUser,
-  getUser,
-  getUsers,
-  loginUser,
-  logoutSession,
-  updateUser,
-} from "../controllers/user.controller.js";
+import { UserController } from "../controllers/user.controller.js";
 import { validateUserRole } from "../middlewares/validateUserRole.js";
 import { validateUserLogin } from "../middlewares/validateUserLogin.js";
 import { validateUserUpdate } from "../middlewares/validateUserUpdate.js";
 
 const router = express.Router();
 
-router.post("/", createUser);
-router.post("/login", loginUser);
-router.get("/users", validateUserRole, getUsers);
-router.get("/:id", validateUserLogin, getUser);
-router.put("/:id", validateUserUpdate, updateUser);
-router.get("/delete/:id", validateUserUpdate, deleteUser);
-router.post("/logout", validateUserLogin, logoutSession);
+router.post("/", UserController.createUser);
+router.post("/login", UserController.loginUser);
+router.get("/users", validateUserRole, UserController.getUsers);
+router.get("/:id", validateUserLogin, UserController.getUser);
+router.put("/:id", validateUserUpdate, UserController.updateUser);
+router.delete("/delete/:id", validateUserUpdate, UserController.deleteUser);
+router.post("/logout", validateUserLogin, UserController.logoutSession);
 
 export { router as userRouter };
