@@ -1,0 +1,363 @@
+show databases;
+
+use ecommerce;
+
+show tables;
+
+/****************************************ENTIDADES DE DATOS**********************************************/
+create table user(
+	user_id INT unsigned auto_increment primary key,
+	first_name VARCHAR(20) not null,
+	last_name VARCHAR(20) not null,
+	email VARCHAR(50) not null unique,
+	phone VARCHAR(15) default null,
+	password VARCHAR(15) not null,
+	user_type_id INT unsigned,
+	created_at timestamp default current_timestamp,
+	updated_at datetime default current_timestamp on update current_timestamp,
+	
+	foreign key(user_type_id) references user_type(user_type_id)
+		on delete restrict 
+		on update cascade 
+);
+
+insert into user(first_name,last_name,email,phone,password,user_type_id) values 
+	('cristian','alvarez','cristian@gmail.com','5555555','123456789',1),
+	('cristian2','alvarez2','cristian2@gmail.com','222222','123456789',2);
+
+select * from user;
+
+
+create table product (
+	product_id INT unsigned auto_increment primary key,
+	product_name VARCHAR(50) not null,
+	price INT unsigned not null,
+	quantity INT unsigned not null,
+	description TEXT default null,
+	promotion BOOL default (false), 
+	total_sales INT default 0,
+	total_refund INT default 0,
+	average_score INT default 5,
+	created_at timestamp default current_timestamp,
+	updated_at datetime default current_timestamp on update current_timestamp
+	
+);
+
+
+insert into product(product_name,price,quantity,description) values
+	('product1',100,20,'The best pants for winter'),
+	('product2',110,15,'Amazing shoes for your kids'),
+	('product3',80,20,'T-shirt for any person');
+
+drop table product;
+select * from product;
+
+
+create table orders (
+	order_id int unsigned auto_increment primary key,
+	quantity_articules int unsigned not null, 
+	total_purchase int unsigned not null,
+	status_id INT unsigned,
+	customer_id INT unsigned,
+	product_id int unsigned,
+	created_at timestamp default current_timestamp,
+	updated_at datetime default current_timestamp on update current_timestamp,
+	
+	foreign key(status_id) references status(status_id)
+		on delete restrict 
+		on update cascade,
+		
+	foreign key(customer_id) references user(user_id)
+		on delete restrict 
+		on update cascade,
+	
+	foreign key(product_id) references product(product_id)
+		on delete restrict 
+		on update cascade
+);
+
+insert into orders (quantity_articules,total_purchase,status_id,customer_id,product_id) values
+	(2,200,1,1,1),
+	(1,110,1,2,2);
+
+
+drop table orders;
+select * from orders;
+
+create table question (
+	question_id INT unsigned auto_increment primary key,
+	first_name VARCHAR(20) not null,
+	last_name VARCHAR(20) not null,
+	email VARCHAR(50) not null unique,
+	phone VARCHAR(15) default null,
+	question TEXT not null,
+	description TEXT,
+	created_at timestamp default current_timestamp,
+	updated_at datetime default current_timestamp on update current_timestamp
+);
+
+drop table question;
+
+insert into question (first_name,last_name,email,phone,question,description) values
+	('andres','jaramillo','andres@hotmail.com','4444444','¿Qué costo tiene el envio del pantalón?','Necesito comparar precios'),
+	('ferney','zapata','zatapa@hotmail.es','777777','¿Qué costo tiene los zapatos rojos?','No veo el precio en el producto');
+
+select * from question;
+
+
+/**********************************ENTIDADES CATÁLOGO*************************************/
+
+show tables;
+drop table category;
+describe user_type;
+
+create table user_type (
+	user_type_id INT unsigned auto_increment primary key,
+	typeUser varchar(20) not null
+);
+
+insert into user_type (typeUser) values
+	('admin'),
+	('client');
+
+select * from user_type;
+
+
+create table types (
+	type_id INT unsigned auto_increment primary key,
+	type_name VARCHAR(20) not null
+);
+
+insert into types (type_name) values
+	('male'),
+	('woman'),
+	('kid');
+
+select * from types;
+
+create table category (
+	category_id INT unsigned auto_increment primary key,
+	category VARCHAR(20)
+);
+	
+insert into category (category) values
+	('winter'),
+	('summer'),
+	('spring'),
+	('autumn');
+	
+select * from category;
+
+create table sizes (
+	size_id INT unsigned auto_increment primary key,
+	sizes_value INT not null
+);
+
+insert into sizes (sizes_value) values
+	(35),
+	(36),
+	(37),
+	(38),
+	(39),
+	(40),
+	(41),
+	(42);
+	
+select * from sizes;
+
+create table color(
+	color_id INT unsigned auto_increment primary key,
+	color_name VARCHAR(20) not null
+);
+
+insert into color (color_name) values
+	('black'),
+	('white'),
+	('red'),
+	('gray'),
+	('blue'),
+	('orange'),
+	('purple');
+
+select * from color;
+
+create table status(
+	status_id int unsigned auto_increment primary key,
+	status varchar(20) not null
+);
+
+insert into status (status) values
+	('pending'),
+	('accepted'),
+	('dispatched'),
+	('delivered'),
+	('rejected');
+
+select * from status;
+
+/******************************ENTIDADES PIVOTE*****************************************/
+
+create table category_x_product (
+	category_x_product int auto_increment primary key,
+	category_id int unsigned,
+	product_id int unsigned,
+	
+	foreign key(category_id) references category(category_id)
+		on delete restrict 
+		on update cascade,
+		
+	foreign key(product_id) references product(product_id)
+		on delete restrict 
+		on update cascade
+);
+
+insert into category_x_product (category_id,product_id) values
+	(1,1),
+	(2,1),
+	(3,2),
+	(4,2);
+
+select * from category_x_product;
+
+create table size_x_product (
+	size_x_product int auto_increment primary key,
+	size_id int unsigned,
+	product_id int unsigned,
+	
+	foreign key(size_id) references sizes(size_id)
+		on delete restrict 
+		on update cascade,
+		
+	foreign key(product_id) references product(product_id)
+		on delete restrict 
+		on update cascade
+);
+
+insert into size_x_product (size_id,product_id) values
+	(1,1),
+	(2,1),
+	(3,1),
+	(6,1),
+	(8,1),
+	(2,2),
+	(3,2),
+	(7,2);
+
+select * from size_x_product;
+
+create table color_x_product (
+	color_x_product int auto_increment primary key,
+	color_id int unsigned,
+	product_id int unsigned,
+	
+	foreign key(color_id) references color(color_id)
+		on delete restrict 
+		on update cascade,
+		
+	foreign key(product_id) references product(product_id)
+		on delete restrict 
+		on update cascade
+);
+
+insert into color_x_product (color_id,product_id) values
+	(1,1),
+	(2,1),
+	(5,1),
+	(2,2),
+	(5,2),
+	(7,2);
+
+select * from color_x_product;
+
+
+create table type_x_product(
+	type_x_product_id int auto_increment primary key,
+	type_id int unsigned,
+	product_id int unsigned,
+	
+	foreign key(type_id) references types(type_id)
+		on delete restrict 
+		on update cascade,
+		
+	foreign key(product_id) references product(product_id)
+		on delete restrict 
+		on update cascade
+);
+
+insert into type_x_product (type_id, product_id) values
+	(1,1),
+	(2,1),
+	(3,1),
+	(2,2),
+	(3,2);
+
+select * from type_x_product;
+
+create table images_x_product (
+	image_id INT unsigned auto_increment primary key,
+	image VARCHAR(255) not null,
+	product_id INT unsigned,
+	created_at timestamp default current_timestamp,
+	updated_at datetime default current_timestamp on update current_timestamp,
+	
+	foreign key(product_id) references product(product_id)
+		on delete restrict 
+		on update cascade
+);
+
+insert into images_x_product (image,product_id) values
+	('https://m.media-amazon.com/images/I/41l2imvuWJL._AC_SY395_.jpg',1),
+	('https://m.media-amazon.com/images/I/51Cwrg+CuVL._AC_SY395_.jpg',1),
+	('https://m.media-amazon.com/images/I/71FUDZ8L89L._AC_SY395_.jpg',2);
+
+drop table images_x_product;
+select * from images_x_product;
+
+create table review_x_product (
+	review_id INT unsigned auto_increment primary key,
+	comment TEXT,
+	score CHAR(1) not null,
+	user_id INT unsigned,
+	product_id INT unsigned,
+	created_at timestamp default current_timestamp,
+	updated_at datetime default current_timestamp on update current_timestamp,
+	
+	foreign key(user_id) references user(user_id)
+		on delete restrict 
+		on update cascade,
+	
+	foreign key(product_id) references product(product_id)
+		on delete restrict 
+		on update cascade
+);
+
+insert into review_x_product (comment,score,user_id,product_id)values
+	('Your product is the best!',5,1,1),
+	('Terrible shop, Im not recomend this product,fuck you',0,2,2);
+
+select * from review_x_product;
+
+create table answer_x_question (
+	answer_x_question_id INT unsigned auto_increment primary key,
+	user_id int unsigned,
+	question_id INT unsigned,
+	answer TEXT not null,
+	created_at timestamp default current_timestamp,
+	updated_at datetime default current_timestamp on update current_timestamp,
+	
+	foreign key(user_id) references user(user_id)
+		on delete restrict 
+		on update cascade,
+	
+	foreign key(question_id) references question(question_id)
+		on delete restrict 
+		on update cascade	
+);
+
+drop table answer_x_question;
+
+insert into answer_x_question (user_id, question_id,answer)values
+	(1,1,'Shipping cost is free'),
+	(2,2,'The price is $200');
+
+select * from answer_x_question;
