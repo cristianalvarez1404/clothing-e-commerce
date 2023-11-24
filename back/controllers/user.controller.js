@@ -1,5 +1,6 @@
 import { ErrorHandler } from "../utilities/ErrorHandler.js";
-import { UserClass } from "../models/MongoDB/userMongoModel.js";
+// import { UserClass } from "../models/MongoDB/userMongoModel.js";
+import { UserClass } from "../models/MySQL/userMySQLModel.js";
 
 export class UserController {
   static async createUser(req, res, next) {
