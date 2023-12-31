@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { ErrorHandler } from "../utilities/ErrorHandler.js";
-import { UserClass } from "../models/MongoDB/userMongoModel.js";
+// import { UserClass } from "../models/MongoDB/userMongoModel.js";
+import { UserClass } from "../models/MySQL/userMySQLModel.js";
 
 const validateUserLogin = async (req, res, next) => {
   const userToken = req.cookies["user-id"];
@@ -12,9 +13,10 @@ const validateUserLogin = async (req, res, next) => {
 
         const user = await UserClass.findUserById(data._id);
 
+        console.log(user);
         if (!user) throw new Error(`User does not exist!`);
 
-        req.userSession = { id: data._id, role: data.role };
+        req.userSession = { id: data._id || data.user_id, role: data.role };
 
         next();
       } catch (err) {

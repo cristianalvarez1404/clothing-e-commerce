@@ -8,6 +8,9 @@ const errorMessages = {
   isAEmailField: (field) => {
     throw new Error(`${field} is not a email, please check it!`);
   },
+  isANumberField: (field) => {
+    throw new Error(`${field} is not a number, please check it!`);
+  },
 };
 
 const validateEmptyfield = (valueField) =>
@@ -23,9 +26,13 @@ const validateEmailfield = (valueField) =>
     ? false
     : true;
 
+const validateNumberField = (valueField) =>
+  typeof valueField !== "number" ? false : true;
+
 export {
   validateEmptyfield,
   validateStringfield,
   validateEmailfield,
+  validateNumberField,
   errorMessages,
 };

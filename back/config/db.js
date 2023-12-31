@@ -6,7 +6,7 @@ const dbConnection = () => {
   mongoose
     .connect(DB_URI)
     .then((res) => {
-      console.log(`DB connected successfully!`);
+      console.log(`MongoDB was connected successfully 🎄🧨🎉!`);
     })
     .catch((err) => {
       console.log(err.message);

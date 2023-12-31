@@ -1,6 +1,6 @@
 import { ErrorHandler } from "../utilities/ErrorHandler.js";
-// import { UserClass } from "../models/MongoDB/userMongoModel.js";
-import { UserClass } from "../models/MySQL/userMySQLModel.js";
+import { UserClass } from "../models/MongoDB/userMongoModel.js";
+// import { UserClass } from "../models/MySQL/userMySQLModel.js";
 
 export class UserController {
   static async createUser(req, res, next) {
@@ -54,7 +54,7 @@ export class UserController {
     } catch (err) {
       next(new ErrorHandler(err.message, 400));
     }
-  } //
+  }
 
   static async getUsers(req, res, next) {
     try {
@@ -67,7 +67,7 @@ export class UserController {
     } catch (err) {
       next(new ErrorHandler(err.message, 400));
     }
-  } //
+  }
 
   static async getUser(req, res, next) {
     try {
@@ -88,7 +88,7 @@ export class UserController {
     } catch (err) {
       next(new ErrorHandler(err.message, 400));
     }
-  } //
+  }
 
   static async logoutSession(req, res, next) {
     try {
@@ -106,7 +106,7 @@ export class UserController {
     } catch (err) {
       next(new ErrorHandler(err.message, 400));
     }
-  } //
+  }
 
   static async updateUser(req, res, next) {
     try {
@@ -132,7 +132,7 @@ export class UserController {
     } catch (err) {
       next(new ErrorHandler(err.message, 400));
     }
-  } //
+  }
 
   static async deleteUser(req, res, next) {
     try {
@@ -149,5 +149,5 @@ export class UserController {
     } catch (err) {
       next(new ErrorHandler(err.message, 400));
     }
-  } //
+  }
 }
