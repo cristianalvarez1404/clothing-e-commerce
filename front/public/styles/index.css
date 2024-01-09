@@ -37,6 +37,12 @@ h6 {
   font-size: 16px;
 }
 
+img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
 /* Utilies */
 
 .width-20 {
@@ -67,6 +73,16 @@ h6 {
   height: 100px;
 }
 
+.height-20vh {
+  height: 20vh;
+}
+.height-50vh {
+  height: 50vh;
+}
+.height-80vh {
+  height: 80vh;
+}
+
 .heigth-100vh {
   height: 100vh;
 }
@@ -87,6 +103,16 @@ h6 {
   font-size: 2rem;
 }
 
+.top-0px {
+  top: 0;
+  left: 0;
+}
+
+.top-10px {
+  top: 10px;
+  left: 10px;
+}
+
 .align-right {
   text-align: right;
 }
@@ -104,7 +130,7 @@ h6 {
 }
 
 .bg-black {
-  background-color: rgb(36, 36, 36);
+  background-color: rgb(56, 55, 55);
 }
 
 .text-white * {
@@ -175,6 +201,14 @@ h6 {
   padding: 2rem;
 }
 
+.position-absolute {
+  position: absolute;
+}
+
+.position-relative {
+  position: relative;
+}
+
 .flex {
   display: flex;
   align-items: center;
@@ -187,6 +221,14 @@ h6 {
 
 .flex-column {
   flex-direction: column;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-justify-between {
+  justify-content: space-between;
 }
 
 .gap-1 {
@@ -248,7 +290,71 @@ h6 {
 
 /* Components */
 
+/* ----------------------------Buttons-------------------- */
+
+.btn {
+  width: 150px;
+  height: 47px;
+  padding: 0.5rem;
+  color: white;
+  background-color: rgb(44, 43, 43);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in;
+}
+
+.btn:hover {
+  background-color: transparent;
+  border: medium solid lightgray;
+  color: inherit;
+}
+
+.title-section {
+  font-family: "Pacifico", cursive;
+  font-size: 2rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* ----------------------------Buttons-------------------- */
+
+.input {
+  padding: 0.8rem;
+  border: none;
+}
+
+.input-email {
+  border-bottom: thin solid black;
+}
+
+/*-----------------------Key frames------------------------*/
+@keyframes withgrow {
+  0% {
+    width: 0;
+  }
+
+  50% {
+    width: 50%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+/* Site Styles */
+
 /*-------------------Navbar----------------------*/
+
+.main-icon {
+  font-family: "Pacifico", cursive;
+  margin: 0;
+}
 
 .header-sticky {
   position: sticky;
@@ -271,6 +377,338 @@ h6 {
   background-color: white;
   animation: withgrow 0.7s forwards ease-in;
 }
+/*-------------------Hero----------------------*/
+
+.hero {
+  width: 100%;
+  height: 75vh;
+  opacity: 0.9;
+}
+
+.hero-img {
+  height: 100%;
+}
+
+.hero-img img {
+  height: 100%;
+  filter: saturate(0.5);
+}
+
+.btn-hero {
+  position: absolute;
+  left: 25%;
+  bottom: 30%;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.hero-text {
+  top: 30%;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+.hero-text h3 {
+  font-size: 3.6rem;
+  letter-spacing: 5px;
+  font-family: "Pacifico", cursive;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+}
+
+/* -----------------Card by Category--------------------- */
+.cards-categories {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card-category {
+  width: 30rem;
+  height: 27rem;
+  background-color: rgb(44, 43, 43);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cart-category-img {
+  width: 100%;
+  height: 100%;
+}
+
+.cart-category-img img {
+  height: 100%;
+  filter: grayscale(0.4);
+}
+
+.card-category-text h3 {
+  margin-top: 0.5rem;
+}
+
+.card-category-text i {
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.card-category-line {
+  width: 50%;
+  padding: 0.2rem;
+  margin-left: auto;
+  margin-right: auto;
+  border-bottom: thin solid rgb(119, 118, 118);
+}
+
+.card-category-img {
+  width: 100%;
+}
+
+.card-category-modal {
+  top: 30%;
+}
+
+.card-category-modal div:first-child {
+  margin-bottom: 0.5rem;
+}
+
+.card-category-btn {
+  background-color: white;
+  border-radius: 0.5rem;
+  color: white;
+  padding: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.7s ease-in;
+}
+
+.card-category-btn * {
+  transform: color 0.7s ease-in;
+}
+
+.card-category-btn {
+  color: white;
+}
+
+.card-category-btn:hover {
+  background-color: black;
+  color: white;
+}
+
+.card-category-btn:hover * {
+  color: white;
+}
+
+/* -----------------Promotion--------------------- */
+
+.promotion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.promotion-images {
+  width: inherit;
+  display: flex;
+  height: 68vh;
+  margin-bottom: 1rem;
+  filter: grayscale(0.5);
+}
+
+.promotion-image {
+  flex: 1;
+  height: 100%;
+}
+
+.promotion-image img {
+  height: inherit;
+}
+
+.promotion-message {
+  height: 20vh;
+  text-align: center;
+}
+
+.promotion-message-title {
+  font-size: 2.5rem;
+}
+
+.promotion-message-description {
+  font-size: 1.2rem;
+}
+
+.promotion-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.promotion-line {
+  width: 70%;
+  height: 1px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: lightgray;
+  margin-bottom: 3rem;
+}
+
+/* -----------------Cards Shoes--------------------- */
+
+.card-shoes-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-shoes {
+  width: 97%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card-shoe {
+  width: 350px;
+  height: 500px;
+  text-align: center;
+  cursor: pointer;
+
+  box-shadow: 8px 7px 11px -4px rgba(173, 159, 173, 0.54);
+}
+
+.card-shoe-image {
+  width: inherit;
+  height: 80%;
+}
+
+.card-shoe-image img {
+  height: 100%;
+
+  transform: scale(80%);
+  transition: transform 0.5s ease-in-out;
+}
+
+.card-shoe-image:hover img {
+  transform: scale(100%);
+}
+
+.card-shoe-message {
+  height: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: start;
+  padding: 0 1rem;
+}
+
+.card-shoe-message h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-shoe-message p {
+  margin: 0;
+  font-size: 1rem;
+  color: gray;
+}
+
+.card-shoe-message span {
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/*-------------------Form Shop----------------------*/
+
+.form {
+  width: 100%;
+  height: 55vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-info {
+  width: 80%;
+  /* background-color: rebeccapurple; */
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.form-info-title {
+  font-size: 2.5rem;
+  font-family: "Pacifico", cursive;
+}
+
+.form-info-description {
+  font-size: 1.3rem;
+}
+
+.form-shop {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  /* background-color: rebeccapurple; */
+}
+
+.form-shop-email input {
+  width: 40rem;
+  padding: 1.2rem;
+  outline: none;
+  font-size: 1.2rem;
+  color: gray;
+}
+
+.form-shop-email input::placeholder {
+  font-size: 1.2rem;
+  padding: 0;
+}
+
+.form-shop-submit input {
+  width: 10rem;
+  padding: 1rem;
+  font-size: 1rem;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.form-shop-submit input:hover {
+  background-color: transparent;
+  color: black;
+  font-weight: 600;
+  outline: medium solid black;
+}
+
+.form-shop-message {
+  width: 80%;
+  text-align: center;
+  padding: 0.5rem;
+  color: gray;
+}
+
 /*-------------------Footer----------------------*/
 
 .link-footer {
@@ -289,28 +727,11 @@ h6 {
   animation: withgrow 0.7s forwards ease-in;
 }
 
-/*-----------------------Key frames------------------------*/
-@keyframes withgrow {
-  0% {
-    width: 0;
-  }
-
-  50% {
-    width: 50%;
-  }
-
-  100% {
-    width: 100%;
-  }
-}
-
 .icon-social-media {
   transition: opacity 0.2s ease-in;
 }
 .icon-social-media:hover {
   opacity: 10%;
 }
-
-/* Site Styles */
 
 /* Media Queries */
