@@ -4,7 +4,7 @@
   --font-second: "Raleway", sans-serif;
 }
 
-/* Reset properties*/
+/* --------------------------------Reset properties---------------------*/
 
 html {
   box-sizing: border-box;
@@ -288,7 +288,7 @@ img {
   width: 100%;
 }
 
-/* Components */
+/* ---------------------------------Components---------------------- */
 
 /* ----------------------------Buttons-------------------- */
 
@@ -735,3 +735,441 @@ img {
 }
 
 /* Media Queries */
+
+/* ------------------------------PAGE LOGIN-------------------------------- */
+
+/* ---------------------------------Components---------------------- */
+
+/* --------------------------------login-------------------------------- */
+.login-container {
+  width: 100%;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(249, 246, 241);
+}
+
+.login {
+  width: 40%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -5px 8px 12px -4px rgba(108, 105, 105, 0.18);
+}
+
+.login > h3 {
+  font-family: "Pacifico", cursive;
+  font-size: 2rem;
+  color: rgb(91, 89, 89);
+}
+
+.login form {
+  width: 80%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.login * label {
+  width: 100%;
+  display: block;
+  padding: 0.5rem;
+}
+
+.login * input {
+  width: 32.75rem;
+  margin-bottom: 0.8rem;
+  outline: none;
+  border: thin solid rgb(209, 206, 206);
+  border-radius: 0.4rem;
+  font-size: 1.2rem;
+  color: rgb(71, 69, 69);
+  padding: 0.8rem;
+}
+
+.login * input:focus {
+  outline: solid thin gray;
+}
+
+.login * input[type="submit"] {
+  width: 15rem;
+  height: 2.8rem;
+  background-color: black;
+  outline: none;
+  border: none;
+  color: white;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.login * input[type="submit"]:hover {
+  background-color: rgb(58, 58, 58);
+}
+
+.login-forgot {
+  font-size: 0.7rem;
+}
+
+.login-forgot a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ------------------------------PAGE REGISTER-------------------------------- */
+
+/* ---------------------------------Components---------------------- */
+
+/* --------------------------------register-------------------------------- */
+
+.register-container {
+  width: 100%;
+  height: 98vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.register {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* background-color: aqua; */
+}
+
+.register-title {
+  font-size: 2.5rem;
+  color: rgb(91, 89, 89);
+  font-family: "Pacifico", cursive;
+}
+
+.register-description {
+  width: 50%;
+  /* background-color: rebeccapurple; */
+  text-align: center;
+  color: gray;
+  padding: 1.2rem;
+  font-size: 1.2rem;
+}
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-form-container {
+  width: 50%;
+  /* background-color: blueviolet; */
+  /* height: 6rem; */
+  display: flex;
+  flex-direction: column;
+}
+
+.register-form-container label,
+.register-form-container input {
+  height: 3.5rem;
+}
+
+.register-form-container label {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  font-size: 0.8rem;
+  /* font-weight: 900; */
+}
+
+.register-form-container > input {
+  outline: none;
+  border: none;
+  border: thin solid rgb(209, 206, 206);
+  border-radius: 0.4rem;
+  font-size: 1.2rem;
+  color: rgb(71, 69, 69);
+  padding: 0.5rem;
+}
+
+.register-form-container input:focus {
+  outline: solid thin gray;
+}
+
+.register-news {
+  margin-top: 1rem;
+  /* background-color: rebeccapurple; */
+  width: 50%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 0.8rem;
+}
+
+.register-news input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.register-submit {
+  /* background-color: rebeccapurple; */
+  width: 50%;
+  padding: 0.8rem;
+}
+
+.register-submit input {
+  width: 15rem;
+  height: 2.8rem;
+  background-color: black;
+  outline: none;
+  border: none;
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.register-submit input:hover {
+  background-color: rgb(58, 58, 58);
+}
+
+.register-privacy {
+  /* background-color: rebeccapurple; */
+  width: 50%;
+  font-size: 0.7rem;
+}
+
+/* ------------------------------PAGE PRODUCTS-------------------------------- */
+
+/* ---------------------------------Components---------------------- */
+
+/* --------------------------------products-------------------------------- */
+
+.products {
+  width: 100%;
+  /* background-color: rebeccapurple; */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.products-container {
+  width: 98%;
+  /* background-color: rebeccapurple; */
+  display: grid;
+  grid-template-columns: 25% 1fr;
+  margin: 2.5rem 0;
+}
+
+.products-filter {
+  padding: 0.6rem;
+}
+
+.product-filter-title {
+  font-size: 1.6rem;
+  font-family: "Pacifico", cursive;
+  text-transform: capitalize;
+  margin-bottom: 0.8rem;
+  color: rgb(51, 49, 49);
+}
+
+.product-filter-section:not(:first-child) {
+  padding: 0.5rem;
+  min-height: 15vh;
+}
+
+.product-filter-section:first-child {
+  padding: 0.2rem;
+}
+
+.product-filter-line {
+  height: 0.1rem;
+  width: 80%;
+  margin: 1.5rem 0;
+  border-radius: 0.7rem;
+  background-color: rgba(242, 231, 231);
+  opacity: 0.4;
+}
+
+.product-filter-sizes {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.product-filter-size {
+  border: thin solid rgb(209, 203, 203);
+  width: 5rem;
+  height: 4rem;
+}
+
+.product-filter-size > a {
+  width: 100%;
+  height: 100%;
+  font-weight: 900;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.product-filter-size > a:hover {
+  background-color: rgb(170, 167, 167);
+  color: white;
+}
+
+.product-filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-filter-check {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.product-box-color {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-single-color {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  border: thin solid lightgray;
+}
+
+.product-hue :nth-child(2) > .product-single-color {
+  background-color: brown;
+}
+.product-hue :nth-child(3) > .product-single-color {
+  background-color: black;
+}
+.product-hue :nth-child(4) > .product-single-color {
+  background-color: gray;
+}
+.product-hue :nth-child(5) > .product-single-color {
+  background-color: wh;
+}
+
+.product-filtered-titles {
+  background-color: rgb(216, 198, 173);
+  padding: 1rem;
+  text-align: center;
+}
+
+.product-filtered-titles h2 {
+  font-size: 2rem;
+  font-family: "Pacifico", cursive;
+  font-weight: 200;
+}
+
+.product-filtered-titles p {
+  font-size: 1.1rem;
+}
+
+.products-filtered {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0.2rem;
+}
+
+.product-filtered-card {
+  width: 350px;
+  height: 680px;
+  /* background-color: rebeccapurple; */
+  padding: 0.5rem;
+  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.product-filtered-card:hover {
+  box-shadow: -1px 3px 27px 1px rgba(168, 159, 168, 1);
+}
+
+.product-card-img {
+  width: 100%;
+  height: 60%;
+}
+
+.product-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-card-details {
+  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0.7rem;
+}
+
+.product-card-details-images {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.product-card-details-images > a {
+  width: 3.7rem;
+  height: 4rem;
+  /* border: medium solid lightgray; */
+}
+
+.product-card-details-images a:hover {
+  border: medium solid lightgray;
+}
+
+.product-card-details-images > a img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-card-section {
+  height: 10%;
+  /* background-color: aqua; */
+  margin: 0 1rem;
+}
+
+.product-card-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+.product-card-sizes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.product-card-sizes > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 2.8rem;
+  /* background-color: gray; */
+  border: medium solid lightgray;
+}
+
+.product-card-sizes > a:hover {
+  background-color: lightgray;
+}
